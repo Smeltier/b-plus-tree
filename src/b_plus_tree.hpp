@@ -10,7 +10,11 @@ public:
         root = new LeafNode();
     }
 
-    ~BPlusTree() {}
+    ~BPlusTree() {
+        if (root != nullptr) {
+            tree_destroy(root);
+        }
+    }
 
     void insert(int key) {
         if (root->n == 2 * T - 1) {
@@ -386,5 +390,16 @@ private:
                 tree_merge_children(node, idx - 1);
             }
         }
+    }
+
+    void tree_destroy(Node* node) {
+        if (!node->is_leaf) {
+            InternalNode* internal = static_cast<InternalNode*>(node);
+
+            for (int i = 0; i <= internal->n; ++i) {
+                tree_destroy(internal->children[i]);
+            }
+        }
+        delete node;
     }
 };
